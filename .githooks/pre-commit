@@ -1,0 +1,43 @@
+#!/usr/bin/env python3
+"""Block a commit that stages a live looking purchase token.
+
+Runs gitleaks over the staged changes when gitleaks is on PATH, then always runs the
+repository's own fixture hygiene guard, which needs nothing but Python. Enable the hook
+once per clone:
+
+    git config core.hooksPath .githooks
+"""
+
+from __future__ import annotations
+
+import shutil
+import subprocess
+import sys
+from pathlib import Path
+
+ROOT = Path(__file__).resolve().parent.parent
+
+
+def run(command: list[str]) -> int:
+    return subprocess.call(command, cwd=ROOT)
+
+
+def main() -> int:
+    if shutil.which("gitleaks"):
+        code = run(["gitleaks", "git", "--staged", "--redact", "--no-banner", "--verbose"])
+        if code != 0:
+            print("gitleaks found a secret in the staged changes, commit blocked", file=sys.stderr)
+            return code
+    else:
+        print("note: gitleaks is not on PATH, running the fixture hygiene guard only")
+
+    venv_python = ROOT / ".venv" / "bin" / "python"
+    python = str(venv_python) if venv_python.exists() else sys.executable
+    code = run([python, "-m", "pytest", "-q", "tests/test_fixture_hygiene.py"])
+    if code != 0:
+        print("the fixture hygiene guard failed, commit blocked", file=sys.stderr)
+    return code
+
+
+if __name__ == "__main__":
+    raise SystemExit(main())

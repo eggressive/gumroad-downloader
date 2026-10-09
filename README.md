@@ -129,6 +129,23 @@ The test suite is fully offline: network entry points are stubbed, so no purchas
 credential is needed to run it. Real Gumroad mechanics are exercised through recorded response
 shapes (Inertia payloads, master playlists, redirects).
 
+### Keeping a purchase token out of the repository
+
+The fixtures carry one synthetic, deliberately low entropy token. A real one is a credential,
+because the token plus the buyer email opens the purchase, so three layers guard it:
+
+- CI scans every push and pull request with gitleaks.
+- `tests/test_fixture_hygiene.py` fails if a token shaped string other than the fixture appears
+  in a tracked file.
+- A pre-commit hook blocks the commit before it ever reaches GitHub. Enable it once per clone:
+
+```console
+git config core.hooksPath .githooks
+```
+
+The hook runs `gitleaks git --staged` when gitleaks is on PATH, and always runs the hygiene
+test, which needs nothing but Python.
+
 ## License
 
 MIT. See [LICENSE](LICENSE).
