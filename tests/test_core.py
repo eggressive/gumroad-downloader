@@ -62,9 +62,10 @@ def app_page(props: dict) -> str:
 
 # --------------------------------------------------------------------------- tokens
 
-# Synthetic fixture values. They keep the shape of the real ones (32 hex characters,
-# a base64 file id) but are deliberately low entropy, so no scanner can read them as a
-# live Gumroad purchase id. Never paste a real token here.
+# Synthetic fixture values. They keep the shape of the real ones (32 hex characters, a
+# base64 file id) but stay far below the entropy an entropy based scanner needs to call
+# something a secret (about 2.5 bits per character here, the usual gate is 3.5), so a
+# placeholder can never be a live Gumroad purchase id. Never paste a real token here.
 TOKEN = "abcdefababcdefababcdefababcdefab"
 FILE_ID = "AAAAAAAAAAAAAAAAAAAAAA=="
 

@@ -2,9 +2,10 @@
 
 A real ``/d/<token>`` value is a credential (the token plus the buyer email opens the
 purchase), so every token shaped string under ``README.md``, ``tests/`` and
-``src/gumroad_dl/`` must be the synthetic fixture token. This is the mistake the
-fixtures were caught with once already: a real purchase id copied out of a working
-download link.
+``src/gumroad_dl/`` must be the synthetic fixture token, which is also low entropy
+enough to keep entropy based scanners such as gitleaks and GitGuardian quiet. This is
+the mistake the fixtures were caught with once already: a real purchase id copied out
+of a working download link.
 """
 
 from __future__ import annotations
