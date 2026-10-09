@@ -62,15 +62,21 @@ def app_page(props: dict) -> str:
 
 # --------------------------------------------------------------------------- tokens
 
+# Synthetic fixture values. They keep the shape of the real ones (32 hex characters,
+# a base64 file id) but are deliberately low entropy, so no scanner can read them as a
+# live Gumroad purchase id. Never paste a real token here.
+TOKEN = "abcdefababcdefababcdefababcdefab"
+FILE_ID = "AAAAAAAAAAAAAAAAAAAAAA=="
+
 
 def test_extract_token_from_download_link():
-    link = "https://gumroad.com/d/ABCDEFABABCDEFABABCDEFABABCDEFAB"
-    assert core.extract_token(link) == "abcdefababcdefababcdefababcdefab"
+    link = f"https://gumroad.com/d/{TOKEN.upper()}"
+    assert core.extract_token(link) == TOKEN
 
 
 def test_extract_token_from_stream_link():
-    link = "https://gumroad.com/s/abcdefababcdefababcdefababcdefab/AAAAAAAAAAAAAAAAAAAAAA=="
-    assert core.extract_token(link) == "abcdefababcdefababcdefababcdefab"
+    link = f"https://gumroad.com/s/{TOKEN}/{FILE_ID}"
+    assert core.extract_token(link) == TOKEN
 
 
 def test_extract_token_rejects_junk():
@@ -270,7 +276,7 @@ def test_download_http_rejects_error_status(tmp_path):
 
 
 def test_authorize_posts_the_email_and_checks_the_result():
-    token = "abcdefababcdefababcdefababcdefab"
+    token = TOKEN
     confirm_url = f"{core.BASE}/confirm?destination=download_page&id={token}"
     session = FakeSession()
     session.routes[confirm_url] = FakeResponse(
@@ -287,7 +293,7 @@ def test_authorize_posts_the_email_and_checks_the_result():
 
 
 def test_authorize_raises_when_gumroad_reprompts():
-    token = "abcdefababcdefababcdefababcdefab"
+    token = TOKEN
     confirm_url = f"{core.BASE}/confirm?destination=download_page&id={token}"
     session = FakeSession()
     session.routes[confirm_url] = FakeResponse(
@@ -303,7 +309,7 @@ def test_authorize_raises_when_gumroad_reprompts():
 
 
 def test_fetch_items_reads_inertia_json_directly():
-    token = "abcdefababcdefababcdefababcdefab"
+    token = TOKEN
     payload = {"props": {"content": {"content_items": [
         {"file_name": "Pattern", "extension": "PDF", "file_size": 10, "id": "p",
          "download_url": "/r/tok/product_files?x=1", "stream_url": None, "duration": None}]}}}
@@ -315,7 +321,7 @@ def test_fetch_items_reads_inertia_json_directly():
 
 
 def test_fetch_items_surfaces_unavailability_reason():
-    token = "abcdefababcdefababcdefababcdefab"
+    token = TOKEN
     payload = {"props": {"content_unavailability_reason_code": "email_confirmation_required"}}
     session = FakeSession()
     session.routes[f"{core.BASE}/d/{token}"] = FakeResponse(text=json.dumps(payload))
@@ -334,7 +340,7 @@ def test_file_redirect_returns_signed_location():
 
 
 def test_video_variant_uses_the_matching_playlist_entry():
-    token = "abcdefababcdefababcdefababcdefab"
+    token = TOKEN
     item = core.Item(index=1, name="02 neck", ext="mp4", file_id="b",
                      stream_url="/s/tok/b", duration=185)
     session = FakeSession()

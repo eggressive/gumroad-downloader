@@ -8,6 +8,7 @@ import pytest
 
 from gumroad_dl import cli, core
 
+# Synthetic fixture token, low entropy on purpose: not a live Gumroad purchase id.
 TOKEN = "abcdefababcdefababcdefababcdefab"
 
 
