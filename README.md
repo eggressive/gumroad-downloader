@@ -56,6 +56,20 @@ gumroad-dl LINK --email EMAIL [options]
 `LINK` accepts the full `/d/<token>` URL, any `/s/<token>/...` URL from the same purchase, or the
 bare 32 character token.
 
+### Where do I get the token?
+
+The token is the purchase redirect id inside the download link. A buyer finds it in:
+
+- the Gumroad receipt email, via the **View content** button (the link is `gumroad.com/d/<token>`)
+- the product page, when Gumroad recognises you as a past buyer (the "you already own this" card)
+- [gumroad.com/library](https://gumroad.com/library), with an account created from the buying address
+- [gumroad.com/license-key-lookup](https://gumroad.com/license-key-lookup), which re-emails the receipt
+- any `/r/<token>/...` or `/s/<token>/...` URL from the same purchase
+
+It cannot be derived from the purchase id, so copy it out of one of those links. Treat it as a
+credential: the confirm page checks only the token plus the buyer email, so a link posted publicly
+is access posted publicly.
+
 Each run writes two artefacts next to the files:
 
 - `results.jsonl`, one record per file with size, sha256, duration or page count, and status
